@@ -38,7 +38,18 @@
 <body class="bg-gray-900 text-white min-h-screen">
     <!-- Background Animation -->
     <div id="vanta-bg" class="fixed inset-0 z-0"></div>
-    
+
+    <!-- Audio Player - UKRYTY -->
+    <audio id="background-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+        Twoja przeglądarka nie obsługuje elementu audio.
+    </audio>
+
+    <!-- Floating Music Control -->
+    <div id="music-control" class="fixed bottom-4 right-4 z-50 bg-gray-800/80 backdrop-blur-sm rounded-full p-3 shadow-lg border border-purple-500/30 cursor-pointer hover:bg-gray-700/80 transition-all duration-300 group">
+        <i id="music-icon" data-feather="play" class="w-6 h-6 text-purple-400 group-hover:text-purple-300"></i>
+    </div>
+
     <!-- Main Content -->
     <div class="relative z-10 container mx-auto px-4 py-8 max-w-md">
         <!-- User Profile Section -->
@@ -193,6 +204,12 @@
         let currentSpotifyActivity = null;
         let spotifyProgressInterval = null;
 
+        // Audio variables
+        let isMusicPlaying = false;
+        const audioPlayer = document.getElementById('background-music');
+        const musicControl = document.getElementById('music-control');
+        const musicIcon = document.getElementById('music-icon');
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('bio').textContent = config.bio;
@@ -226,12 +243,54 @@
                 linksContainer.appendChild(linkElement);
             });
 
+            // Initialize music control
+            musicControl.addEventListener('click', toggleMusic);
+            
+            // Auto-play music after user interaction (to comply with browser policies)
+            document.addEventListener('click', function initAudio() {
+                if (!isMusicPlaying) {
+                    // Try to play music automatically on first user interaction
+                    audioPlayer.volume = 0.5;
+                    audioPlayer.play().then(() => {
+                        isMusicPlaying = true;
+                        updateMusicIcon();
+                    }).catch(error => {
+                        console.log('Auto-play prevented:', error);
+                    });
+                }
+                document.removeEventListener('click', initAudio);
+            });
+
             loadDiscordData();
             feather.replace();
             
             // Ustaw interwał do odświeżania danych co 5 sekund
             setInterval(loadDiscordData, 5000);
         });
+
+        // Music control functions
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                audioPlayer.pause();
+                isMusicPlaying = false;
+            } else {
+                audioPlayer.play().then(() => {
+                    isMusicPlaying = true;
+                }).catch(error => {
+                    console.log('Play failed:', error);
+                });
+            }
+            updateMusicIcon();
+        }
+
+        function updateMusicIcon() {
+            if (isMusicPlaying) {
+                musicIcon.setAttribute('data-feather', 'pause');
+            } else {
+                musicIcon.setAttribute('data-feather', 'play');
+            }
+            feather.replace();
+        }
 
         // Discord data loading
         async function loadDiscordData() {
@@ -564,6 +623,14 @@
             }
             #spotify-playing-animation div {
                 animation: pulse 1s ease-in-out infinite;
+            }
+            /* Style for music control */
+            #music-control {
+                transition: all 0.3s ease;
+            }
+            #music-control:hover {
+                transform: scale(1.1);
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
             }
         `;
         document.head.appendChild(style);
