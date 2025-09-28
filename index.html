@@ -40,14 +40,14 @@
     <div id="vanta-bg" class="fixed inset-0 z-0"></div>
 
     <!-- Audio Player - UKRYTY -->
-    <audio id="background-music" loop>
+    <audio id="background-music" loop autoplay>
         <source src="music.mp3" type="audio/mpeg">
         Twoja przeglądarka nie obsługuje elementu audio.
     </audio>
 
     <!-- Floating Music Control -->
     <div id="music-control" class="fixed bottom-4 right-4 z-50 bg-gray-800/80 backdrop-blur-sm rounded-full p-3 shadow-lg border border-purple-500/30 cursor-pointer hover:bg-gray-700/80 transition-all duration-300 group">
-        <i id="music-icon" data-feather="play" class="w-6 h-6 text-purple-400 group-hover:text-purple-300"></i>
+        <i id="music-icon" data-feather="pause" class="w-6 h-6 text-purple-400 group-hover:text-purple-300"></i>
     </div>
 
     <!-- Main Content -->
@@ -205,7 +205,7 @@
         let spotifyProgressInterval = null;
 
         // Audio variables
-        let isMusicPlaying = false;
+        let isMusicPlaying = true; // Domyślnie muzyka gra
         const audioPlayer = document.getElementById('background-music');
         const musicControl = document.getElementById('music-control');
         const musicIcon = document.getElementById('music-icon');
@@ -246,19 +246,18 @@
             // Initialize music control
             musicControl.addEventListener('click', toggleMusic);
             
-            // Auto-play music after user interaction (to comply with browser policies)
-            document.addEventListener('click', function initAudio() {
-                if (!isMusicPlaying) {
-                    // Try to play music automatically on first user interaction
-                    audioPlayer.volume = 0.5;
-                    audioPlayer.play().then(() => {
-                        isMusicPlaying = true;
-                        updateMusicIcon();
-                    }).catch(error => {
-                        console.log('Auto-play prevented:', error);
-                    });
-                }
-                document.removeEventListener('click', initAudio);
+            // Auto-play music immediately
+            audioPlayer.volume = 0.5;
+            
+            // Spróbuj uruchomić muzykę automatycznie
+            audioPlayer.play().then(() => {
+                console.log('Music started automatically');
+                isMusicPlaying = true;
+                updateMusicIcon();
+            }).catch(error => {
+                console.log('Auto-play was prevented:', error);
+                // Jeśli autoodtwarzanie zostało zablokowane, pokaż komunikat
+                showAutoPlayMessage();
             });
 
             loadDiscordData();
@@ -267,6 +266,26 @@
             // Ustaw interwał do odświeżania danych co 5 sekund
             setInterval(loadDiscordData, 5000);
         });
+
+        // Funkcja pokazująca komunikat o autoodtwarzaniu
+        function showAutoPlayMessage() {
+            const message = document.createElement('div');
+            message.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-purple-600/90 text-white px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm';
+            message.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i data-feather="volume-x" class="w-4 h-4"></i>
+                    <span class="text-sm">Kliknij przycisk muzyki aby włączyć dźwięk</span>
+                </div>
+            `;
+            document.body.appendChild(message);
+            
+            feather.replace();
+            
+            // Usuń komunikat po 5 sekundach
+            setTimeout(() => {
+                message.remove();
+            }, 5000);
+        }
 
         // Music control functions
         function toggleMusic() {
