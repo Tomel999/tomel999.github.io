@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0",
+  "notes": "Pierwsza wersja Ogulniega Launcher",
+  "pub_date": "2025-11-29T14:17:00+01:00",
+  "platforms": {
+    "linux-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUdkhtMnpORmxUOHhvWTNEYlFjTDlaWlNKc01CUWprVGk1cFlzY1NzTElVbHhmdVRsWGdBbTBENXZDSVh1Z0RvTWxLUS9YR1A1Sm8yYkMyMnlrREpQMytzMWlCZVFGendrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY0NDIxMDM0CWZpbGU6b2d1bG5pZWdhXzAuMS4wX2FtZDY0LkFwcEltYWdlCnF0bVgxem4zUjZ2M1hPV2dVS0VpRnFCaHhaa1RObEdoVlpod0RwTWlZdlBObEF6VnhROEt1VithZWQyUWV0SS9XZVd6eDJBVEhSNVpYa0RQRlZPK0J3PT0K",
+      "url": "https://github.com/Tomel999/tomel999.github.io/releases/download/v0.1.0/ogulniega_0.1.0_amd64.AppImage"
+    }
+  }
+}
